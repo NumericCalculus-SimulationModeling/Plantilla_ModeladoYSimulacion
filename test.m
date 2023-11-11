@@ -1,7 +1,7 @@
 clear, clc
 LineStyles = {'--', };
 LineWidths = {};
-DisplayNames = {'Hello', };
+DisplayNames = {'', };
 Colors = {'b'};
 Y = {};
 
@@ -9,8 +9,9 @@ pl_fields = {'', 'LineStyle', 'LineWidth', 'DisplayName'};
 pl_compress_fields = {Y, LineStyles, LineWidths, DisplayNames};
 
 pl = group_data(pl_fields, pl_compress_fields);
-my_cell = {}
-plot([1, 2, 3], my_cell{:})
+
+plot([1, 2, 3], LineWidth='default', DisplayName='hola_mundo')
+legend()
 
 function grouped_data = group_data(field_names, compress_fields)
 % Group named args

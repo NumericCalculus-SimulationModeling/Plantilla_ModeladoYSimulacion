@@ -10,7 +10,7 @@ solver = struct( ...
 
 pl_named_args = struct( ...
     LineStyle = '-', ...
-    LineWidth = 'default', ...
+    LineWidth = '', ...
     DisplayName = '' ...
 );
 
@@ -23,91 +23,83 @@ sc_named_args = struct( ...
     MarkerEdgeAlpha = '0.5', ...
     DisplayName = '' ...
 );
-% Notes:
-% Color=Value not specified in order to get default colors (can't get in other way)
-% No keyword argument for points values (not available)
-% For custom color add keyword argument Color or append to Linestyle/Marker in each case
 
-label_default = struct(Interpreter='latex');
-labels_named_args = struct( ...
-    x = label_default, ...
-    y = label_default, ...
-    title = label_default);
-% Note:
-% No keyword argument for text (not available)
+% SOLVER CONFIG
+SolverTypes = {'VariableStep', };
+SolverNames = {'ode45', };
+StartTimes = {0, };
+FixedSteps = {1, };
+StopTimes = {20, };
 
-% SOLVER EXAMPLE
-
-
-
-% % PLOT EXAMPLE
-% x = [1, 2, 3]; 
-% y = [5, 2, 5];
-
-% my_plot_pos_args = {x, y};
-
-% my_plot_named_args = pl_named_args;
-% my_plot_named_args.LineStyle = '--';
-% my_plot_named_args.DisplayName = 'f(x)';
-
-% my_plot_args = combine_args(my_plot_pos_args, my_plot_named_args);
-
-% % LABELS EXAMPLE
-% my_labels_pos_args = {'x', 'my_function f(x)', 'My Title $e^{i\pi} - 1 = 0$'};
-% my_labels_named_args = labels_named_args;
-% my_labels_named_args.y.Interpreter = 'none';
-
-% my_labels_args = combine_labels_args(my_labels_pos_args, my_labels_named_args);
+solver_fields = {'SolverType', 'SolverName', 'StartTime', 'FixedStep', 'StopTime'};
+solver_compress_fields = {SolverTypes, SolverNames, StartTimes, FixedSteps, StopTimes};
+solver_compress_fields = cellfun(@string, solver_compress_fields, UniformOutput=false);
 
 % PLOT CONFIG
-X = {};
-Y = {};
+Xs = {};
+Ys = {};
 Colors = {'', };
-LineStyles = {'', };
+LineStyles = {'-', };
 LineWidths = {'', };
-DisplayNames = {'', };
+DisplayNames = {'f(x)', };
 
 pl_fields = {'', '', 'LineStyle', 'LineWidth', 'DisplayName', 'Color'};
 pl_compress_fields = {X, Y, LineStyles, LineWidths, DisplayNames};
 
+% SCATTER CONFIG
+Xs = {};
+Ys = {};
+Markers = {'.', };
+SizesData = {'32', };
+MarkersFaceColor = {'flat', };
+MarkersEdgeColor = {'flat', };
+MarkersFaceAlpha = {0.5, };
+MarkersFaceAlpha = {0.5, };
+DisplayNames = {'f(x)', };
+
+sc_fields = {'', '', 'Marker', 'SizeData', 'MarkerFaceColor', 'MarkerEdgeColor', 'MarkerEdgeAlpha', 'MarkerEdgeAlpha', 'DisplayName'};
+sc_compress_fields = {Xs, Ys, Markers, SizesData, MarkersFaceColor, MarkersEdgeColor, MarkersEdgeAlpha, MarkersEdgeAlpha, DisplayNames};
+sc_compress_fields = cellfun(@string, sc_compress_fields, UniformOutput=false);
+
 % XLABEL CONFIG
-txt = {'', };
-Interpreters = {'', };
+txts = {'$x$', };
+Interpreters = {'latex', };
 
 xlabel_fields = {'', 'Interpreter', };
-xlabel_compress_fields = {txt, Interpreters, };
-
-xlabel_configs = group_data(xlabel_fields, xlabel_compress_fields);
+xlabel_compress_fields = {txts, Interpreters, };
 
 % YLABEL CONFIG
-txt = {'', };
-Interpreters = {'', };
+txts = {'$y$', };
+Interpreters = {'latex', };
 
-xlabel_fields = {'', 'Interpreter', };
-xlabel_compress_fields = {txt, Interpreters, };
-
-xlabel_configs = group_data(xlabel_fields, xlabel_compress_fields);
+ylabel_fields = {'', 'Interpreter', };
+ylabel_compress_fields = {txts, Interpreters, };
 
 % TITLE CONFIG
-txt = {'', };
-Interpreters = {'', };
+txts = {'$y = f(x)$', };
+Interpreters = {'latex', };
 
-xlabel_fields = {'', 'Interpreter', };
-xlabel_compress_fields = {txt, Interpreters, };
+titlelabel_fields = {'', 'Interpreter', };
+titlelabel_compress_fields = {txts, Interpreters, };
 
 
 % GROUP CONFIG PARAMETERS INTO SINGLE CONFIGS
+solver_configs = group_data(solver_fields, solver_compress_fields);
 pl_configs = group_data(pl_fields, pl_compress_fields);
+sc_configs = group_data(sc_fields, sc_compress_fields);
 xlabel_configs = group_data(xlabel_fields, xlabel_compress_fields);
+ylabel_configs = group_data(ylabel_fields, ylabel_compress_fields);
+titlelabel_configs = group_data(titlelabel_fields, titlelabel_compress_fields);
 
 % COMPRESS CONFIGS
 compress_configs = {solver_configs, pl_configs, xlabel_configs, ylabel_configs, title_configs};
 config_types = {'solver', 'plot', 'scatter', 'xlabel', 'ylabel', 'title'};
 
+cfg = group_configs(config_types, compress_configs);
 
 function cfg = group_configs(config_types, compress_configs)
 % Join configs into a base config (cfg)
-% Example: cfg.pl{3}{:} returns all args for plot config in index 3 of plot configs
+% Example: cfg.plot{3}{:} returns all args for plot config in index 3 of plot configs
 % INPUTS
 % ------------------------------------------
 % config_types = cell array
@@ -118,7 +110,7 @@ function cfg = group_configs(config_types, compress_configs)
 % cfg = struct of cell arrays
     cfg = struct()
     for i=1:length(config_types)
-        cfg.(config_types(i)) = configs{i};
+        cfg.(config_types(i)) = compress_configs{i};
     end
 end
 
