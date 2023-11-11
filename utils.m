@@ -32,7 +32,7 @@ SizesData = {'32', };
 MarkersFaceColor = {'flat', };
 MarkersEdgeColor = {'flat', };
 MarkersFaceAlpha = {0.5, };
-MarkersFaceAlpha = {0.5, };
+MarkersEdgeAlpha = {0.5, };
 DisplayNames = {'f(x)', };
 
 sc_fields = {'', '', 'Marker', 'SizeData', 'MarkerFaceColor', 'MarkerEdgeColor', 'MarkerEdgeAlpha', 'MarkerEdgeAlpha', 'DisplayName'};
@@ -70,10 +70,11 @@ ylabel_configs = group_data(ylabel_fields, ylabel_compress_fields);
 titlelabel_configs = group_data(titlelabel_fields, titlelabel_compress_fields);
 
 % COMPRESS CONFIGS
-compress_configs = {solver_configs, pl_configs, xlabel_configs, ylabel_configs, title_configs};
+compress_configs = {solver_configs, pl_configs, sc_configs, xlabel_configs, ylabel_configs, titlelabel_configs};
 config_types = {'solver', 'plot', 'scatter', 'xlabel', 'ylabel', 'title'};
 
 cfg = group_configs(config_types, compress_configs);
+
 
 function cfg = group_configs(config_types, compress_configs)
 % Join configs into a base config (cfg)
@@ -86,49 +87,12 @@ function cfg = group_configs(config_types, compress_configs)
 % OUTPUTS
 % ------------------------------------------
 % cfg = struct of cell arrays
-    cfg = struct()
+    cfg = struct();
     for i=1:length(config_types)
-        cfg.(config_types(i)) = compress_configs{i};
+        cfg.(config_types{i}) = compress_configs{i};
     end
 end
 
-
-
-
-
-
-
-function args = combine_args(positional_args, named_args)
-% Combine positional and keyword arguments
-% Useful when passing to a function as args{:}
-% INPUTS
-% ------------------------------------------
-% positional_args = cell array
-% named_args = struct
-%
-% OUTPUTS
-% ------------------------------------------
-% args = cell array
-    args = [positional_args, namedargs2cell(named_args)];
-end
-
-function labels_args = combine_labels_args(labels_pos_args, labels_named_args)
-% Group labels args
-% INPUTS
-% ------------------------------------------
-% labels_pos_args = cell array
-% labels_named_args = struct of structs
-%
-% OUTPUTS
-% ------------------------------------------
-% labels_args = struct of cell arrays
-    label_types = {'x', 'y', 'title'};
-    labels_args = struct();
-    for i = 1:length(label_types)
-        type = label_types{i};
-        labels_args.(type) = combine_args(labels_pos_args{i}, labels_named_args.(type));
-    end
-end
 
 function grouped_data = group_data(field_names, compress_fields)
 % Group named args
